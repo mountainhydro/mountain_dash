@@ -17,16 +17,24 @@ PROJECT = "promising-era-496715-j5"
 
 @st.cache_resource
 def init_ee():
-    try:
-        import json
+    import json
+    if "GEE_SERVICE_ACCOUNT" in st.secrets:
         info = st.secrets["GEE_SERVICE_ACCOUNT"]
         credentials = ee.ServiceAccountCredentials(
             email=info["client_email"],
             key_data=json.dumps(dict(info)),
         )
         ee.Initialize(credentials, project=PROJECT)
-    except (KeyError, FileNotFoundError):
-        ee.Initialize(project=PROJECT)
+    else:
+        try:
+            ee.Initialize(project=PROJECT)
+        except ee.EEException:
+            st.error(
+                "Google Earth Engine credentials not found. "
+                "Add your service-account JSON to Streamlit Cloud secrets as **GEE_SERVICE_ACCOUNT**, "
+                "or run `earthengine authenticate` locally."
+            )
+            st.stop()
 
 init_ee()
 
