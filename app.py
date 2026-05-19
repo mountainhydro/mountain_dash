@@ -24,16 +24,16 @@ def init_ee():
             email=info["client_email"],
             key_data=json.dumps(dict(info)),
         )
-        ee.Initialize(credentials, project=PROJECT)
+        try:
+            ee.Initialize(credentials, project=PROJECT)
+        except Exception as exc:
+            st.error(f"Earth Engine initialization failed: {exc}")
+            st.stop()
     else:
         try:
             ee.Initialize(project=PROJECT)
-        except ee.EEException:
-            st.error(
-                "Google Earth Engine credentials not found. "
-                "Add your service-account JSON to Streamlit Cloud secrets as **GEE_SERVICE_ACCOUNT**, "
-                "or run `earthengine authenticate` locally."
-            )
+        except Exception as exc:
+            st.error(f"Earth Engine credentials not found or initialization failed: {exc}")
             st.stop()
 
 init_ee()
