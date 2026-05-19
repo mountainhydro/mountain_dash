@@ -94,7 +94,7 @@ for name, tile_url, opacity in layers:
 legend_html = """
 <div style="position:fixed;bottom:30px;right:30px;z-index:1000;background:white;
             padding:12px 16px;border-radius:8px;border:1px solid #ccc;
-            font-family:Arial,sans-serif;font-size:13px;line-height:2;">
+            font-family:Arial,sans-serif;font-size:13px;line-height:2;color:black;">
   <b>Kapos Mountain Classes</b><br>
   <span style="background:#54278f;display:inline-block;width:14px;height:14px;margin-right:6px;vertical-align:middle;"></span>K1 &gt; 4 500 m<br>
   <span style="background:#2171b5;display:inline-block;width:14px;height:14px;margin-right:6px;vertical-align:middle;"></span>K2 3 500–4 500 m<br>
