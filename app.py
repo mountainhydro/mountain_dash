@@ -6,14 +6,6 @@ import folium
 import streamlit as st
 from streamlit_folium import st_folium
 
-STRATUM_COLORS = {
-    "Asia_Central":  "#e41a1c",
-    "South_America": "#377eb8",
-    "North_America": "#4daf4a",
-    "Europe":        "#984ea3",
-    "Africa":        "#ff7f00",
-    "Other":         "#a65628",
-}
 SAMPLE_PATH = Path("data/mountain_sample_1000.geojson")
 
 st.set_page_config(page_title="Kapos Mountain Classes", layout="wide")
@@ -128,7 +120,7 @@ if SAMPLE_PATH.exists():
     for feat in sample_geojson["features"]:
         lon, lat = feat["geometry"]["coordinates"]
         p = feat["properties"]
-        color = STRATUM_COLORS.get(p.get("stratum", "Other"), "#888888")
+        color = "#e31a1c"
         elev   = p.get("elevation")
         slope  = p.get("slope")
         kapos  = p.get("kapos_class")
