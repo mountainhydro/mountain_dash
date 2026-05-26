@@ -1,7 +1,20 @@
+import json
+from pathlib import Path
+
 import ee
 import folium
 import streamlit as st
 from streamlit_folium import st_folium
+
+STRATUM_COLORS = {
+    "Asia_Central":  "#e41a1c",
+    "South_America": "#377eb8",
+    "North_America": "#4daf4a",
+    "Europe":        "#984ea3",
+    "Africa":        "#ff7f00",
+    "Other":         "#a65628",
+}
+SAMPLE_PATH = Path("data/mountain_sample_1000.geojson")
 
 st.set_page_config(page_title="Kapos Mountain Classes", layout="wide")
 st.title("Kapos Mountain Classes (Global)")
@@ -105,6 +118,38 @@ legend_html = """
 </div>
 """
 m.get_root().html.add_child(folium.Element(legend_html))
+
+# ── Sample points ─────────────────────────────────────────────────────────────
+if SAMPLE_PATH.exists():
+    with open(SAMPLE_PATH) as f:
+        sample_geojson = json.load(f)
+
+    fg = folium.FeatureGroup(name="random sample+kmeansEmb (1000p)", show=True)
+    for feat in sample_geojson["features"]:
+        lon, lat = feat["geometry"]["coordinates"]
+        p = feat["properties"]
+        color = STRATUM_COLORS.get(p.get("stratum", "Other"), "#888888")
+        elev   = p.get("elevation")
+        slope  = p.get("slope")
+        kapos  = p.get("kapos_class")
+        tip = (
+            f"<b>{p.get('stratum', '—')}</b><br>"
+            + (f"Elevation: {elev:.0f} m<br>" if elev is not None else "")
+            + (f"Kapos: K{int(kapos)}<br>"    if kapos is not None else "")
+            + (f"Slope: {slope:.1f}°"         if slope is not None else "")
+        )
+        folium.CircleMarker(
+            location=[lat, lon],
+            radius=4,
+            color=color,
+            fill=True,
+            fill_color=color,
+            fill_opacity=0.85,
+            weight=0.5,
+            tooltip=tip,
+        ).add_to(fg)
+    fg.add_to(m)
+
 folium.LayerControl(collapsed=False).add_to(m)
 
 st_folium(m, use_container_width=True, height=700)
