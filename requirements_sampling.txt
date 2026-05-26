@@ -1,0 +1,7 @@
+earthengine-api>=0.1.370
+pandas>=2.0
+numpy>=1.24
+scikit-learn>=1.4
+geopandas>=0.14
+shapely>=2.0
+pyogrio>=0.7

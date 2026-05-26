@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(Test-Path \"$env:USERPROFILE\\\\.config\\\\earthengine\\\\credentials\")"
+    ]
+  }
+}

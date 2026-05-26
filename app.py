@@ -46,15 +46,12 @@ init_ee()
 # ── Terrain & Kapos classification ────────────────────────────────────────────
 @st.cache_resource
 def build_layers():
-    srtm  = ee.Image("USGS/SRTMGL1_003").select("elevation")
-    slope = ee.Terrain.slope(srtm)
-    # Resample to 250 m before the neighbourhood operation — far fewer pixels,
-    # much faster tile computation; boxcar gives a fast separable approximation.
-    srtm_250 = srtm.reproject(crs="EPSG:4326", scale=250)
-    kernel   = ee.Kernel.circle(7000, "meters")
+    srtm   = ee.Image("USGS/SRTMGL1_003").select("elevation")
+    srtm90 = ee.Image("CGIAR/SRTM90_V4").select("elevation")
+    slope  = ee.Terrain.slope(srtm)
     local_relief = (
-        srtm_250.reduceNeighborhood(ee.Reducer.max(), kernel, optimization="boxcar")
-        .subtract(srtm_250.reduceNeighborhood(ee.Reducer.min(), kernel, optimization="boxcar"))
+        srtm90.focal_max(radius=7000, kernelType="circle", units="meters")
+        .subtract(srtm90.focal_min(radius=7000, kernelType="circle", units="meters"))
     )
     specs = [
         (srtm.updateMask(srtm.gt(4500)),
